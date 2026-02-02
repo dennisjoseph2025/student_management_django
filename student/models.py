@@ -17,7 +17,10 @@ class Student(AbstractUser):
         default='STUDENT'
     )
     std_age = models.IntegerField(null=True, blank=True)
-    std_pic = models.FileField(upload_to="student_pic", null=True, blank=True)
+
+    # Updated to use Cloudinary
+    std_pic = models.ImageField(upload_to="student_pic", null=True, blank=True)
+
     std_reg_no = models.CharField(max_length=12, unique=True)
     std_dept = models.ForeignKey(Department, on_delete=models.CASCADE, null=True, blank=True)
     std_year_of_admission = models.IntegerField(default=date.today().year)
