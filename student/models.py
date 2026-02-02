@@ -17,8 +17,7 @@ class Student(AbstractUser):
         default='STUDENT'
     )
     std_age = models.IntegerField(null=True, blank=True)
-
-    # Updated to use Cloudinary
+    
     std_pic = models.ImageField(upload_to="student_pic", null=True, blank=True)
 
     std_reg_no = models.CharField(max_length=12, unique=True)

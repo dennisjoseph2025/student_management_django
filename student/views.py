@@ -8,7 +8,7 @@ from principal.models import AddOnCourse
 from django.core.paginator import Paginator
 from django.core.mail import send_mail
 from django.conf import settings
-
+from cloudinary_storage.storage import MediaCloudinaryStorage
 
 # Handle landing page request
 def landing(request):
@@ -170,31 +170,30 @@ def purchase_course(request):
 # Handle student profile management (requires login)
 @login_required
 def student_profile(request):
-    # Process POST request for profile updates
     if request.method == "POST":
         update_type = request.POST.get("update_type", "")
-        
-        # Handle profile picture update separately
+
         if update_type == "profile_pic":
             form = StudentProfilePictureForm(request.POST, request.FILES)
             if form.is_valid():
                 std_pic = form.cleaned_data['std_pic']
-                
-                # Delete old picture if exists
+
+                # Use Cloudinary storage to delete old picture safely
                 if request.user.std_pic:
-                    request.user.std_pic.delete(save=False)
-                
+                    storage = MediaCloudinaryStorage()
+                    storage.delete(request.user.std_pic.name)  # deletes from Cloudinary
+
                 # Save new picture
                 request.user.std_pic = std_pic
                 request.user.save()
-                
+
                 messages.success(request, "Profile picture updated successfully!")
             else:
                 for field, errors in form.errors.items():
                     for error in errors:
                         messages.error(request, f"{error}")
+
         else:
-            # Handle general profile information update
             form = StudentProfileForm(request.POST, instance=request.user)
             if form.is_valid():
                 form.save()
@@ -206,7 +205,6 @@ def student_profile(request):
 
         return redirect("student_profile")
 
-    # For GET requests, show profile page with forms
     profile_form = StudentProfileForm(instance=request.user)
     profile_pic_form = StudentProfilePictureForm()
     
