@@ -1,0 +1,328 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Dashboard{% endblock %}
+{% block page_header %}Student Dashboard{% endblock %}
+
+{% block extra_css %}
+<!-- Tailwind CSS via CDN -->
+<style>
+  .card-hover:hover {
+    transform: translateY(-5px);
+    transition: all 0.3s ease;
+  }
+
+  .fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .gradient-bg {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+
+  .stat-card {
+    border-left-width: 4px;
+    transition: all 0.3s ease;
+  }
+
+  .stat-card:hover {
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-6">
+  <div class="max-w-7xl mx-auto">
+    <!-- Welcome Section -->
+    <div class="mb-6 md:mb-8 fade-in">
+      <div class="gradient-bg text-white rounded-2xl shadow-xl p-6 md:p-8 card-hover">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+          <div class="mb-4 md:mb-0">
+            <h2 class="text-2xl md:text-3xl font-bold mb-2">
+              <i class="bi bi-person-circle mr-2"></i>
+              Welcome, {{ request.user.first_name }}!
+            </h2>
+            <p class="text-blue-100 opacity-90">Track your courses and learning progress</p>
+          </div>
+          <div class="text-center md:text-right">
+            <div class="text-4xl md:text-5xl font-bold">{{ total_courses_bought }}</div>
+            <small class="text-blue-100">Approved Courses</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Cards Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
+      <!-- Approved Courses Card -->
+      <div class="stat-card bg-white border-l-4 border-green-500 rounded-lg shadow-md p-4 md:p-6 fade-in">
+        <div class="flex items-center">
+          <div class="flex-shrink-0 mr-4">
+            <i class="bi bi-check-circle text-3xl text-green-500"></i>
+          </div>
+          <div>
+            <h5 class="text-gray-500 text-sm font-medium">Approved Courses</h5>
+            <h3 class="text-2xl md:text-3xl font-bold text-gray-800">{{ approved_courses }}</h3>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pending Courses Card -->
+      <div class="stat-card bg-white border-l-4 border-yellow-500 rounded-lg shadow-md p-4 md:p-6 fade-in">
+        <div class="flex items-center">
+          <div class="flex-shrink-0 mr-4">
+            <i class="bi bi-hourglass-split text-3xl text-yellow-500"></i>
+          </div>
+          <div>
+            <h5 class="text-gray-500 text-sm font-medium">Pending Approval</h5>
+            <h3 class="text-2xl md:text-3xl font-bold text-gray-800">{{ pending_courses }}</h3>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rejected Courses Card -->
+      <div class="stat-card bg-white border-l-4 border-red-500 rounded-lg shadow-md p-4 md:p-6 fade-in">
+        <div class="flex items-center">
+          <div class="flex-shrink-0 mr-4">
+            <i class="bi bi-x-circle text-3xl text-red-500"></i>
+          </div>
+          <div>
+            <h5 class="text-gray-500 text-sm font-medium">Rejected</h5>
+            <h3 class="text-2xl md:text-3xl font-bold text-gray-800">{{ rejected_courses }}</h3>
+          </div>
+        </div>
+      </div>
+
+      <!-- Total Spent Card -->
+      <div class="stat-card bg-white border-l-4 border-blue-500 rounded-lg shadow-md p-4 md:p-6 fade-in">
+        <div class="flex items-center">
+          <div class="flex-shrink-0 mr-4">
+            <i class="bi bi-cash-coin text-3xl text-blue-500"></i>
+          </div>
+          <div>
+            <h5 class="text-gray-500 text-sm font-medium">Total Spent</h5>
+            <h3 class="text-2xl md:text-3xl font-bold text-gray-800">₹{{ total_amount_spent }}</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8 mb-6 md:mb-8">
+      <!-- Approved Courses Table -->
+      <div class="lg:col-span-2 fade-in">
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+          <div class="bg-gradient-to-r from-green-50 to-green-100 px-6 py-4 border-b border-gray-200">
+            <div class="flex flex-col sm:flex-row justify-between items-center">
+              <h5 class="text-xl font-bold text-gray-800 mb-2 sm:mb-0">
+                <i class="bi bi-check-circle mr-2 text-green-600"></i>
+                My Approved Courses
+              </h5>
+              <span class="bg-green-600 text-white px-3 py-1 rounded-full text-sm font-medium">
+                {{ approved_courses }} courses
+              </span>
+            </div>
+          </div>
+
+          <div class="p-4 md:p-6">
+            {% if courses and courses|length > 0 %}
+            <div class="overflow-x-auto custom-scrollbar">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Course ID</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Course Name</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                  {% for purchase in courses %}
+                  <tr class="hover:bg-gray-50 transition-colors duration-150">
+                    <td class="px-4 py-3 whitespace-nowrap">
+                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                        {{ purchase.course.course_id }}
+                      </span>
+                    </td>
+                    <td class="px-4 py-3">
+                      <div class="text-sm font-medium text-gray-900">{{ purchase.course.course_name }}</div>
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap">
+                      {% if purchase.course.department %}
+                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        {{ purchase.course.department.dept_name }}
+                      </span>
+                      {% else %}
+                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                        Unassigned
+                      </span>
+                      {% endif %}
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap">
+                      <span class="text-sm font-bold text-green-600">₹{{ purchase.course.course_price }}</span>
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap">
+                      <div class="flex space-x-2">
+                        <form method="POST" class="inline">
+                          {% csrf_token %}
+                          <input type="hidden" name="action" value="remove_course">
+                          <input type="hidden" name="student_course_id" value="{{ purchase.id }}">
+                          <button type="submit"
+                            class="inline-flex items-center p-1.5 border border-transparent rounded-lg text-red-600 bg-red-50 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                            title="Remove" onclick="return confirm('Are you sure you want to remove this course?')">
+                            <i class="bi bi-trash"></i>
+                          </button>
+                        </form>
+                      </div>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            {% else %}
+            <div class="text-center py-8">
+              <i class="bi bi-book text-5xl text-gray-300 mb-4"></i>
+              <h5 class="text-gray-500 font-semibold text-lg mb-2">No Approved Courses Yet</h5>
+              <p class="text-gray-400 mb-6">You don't have any approved courses yet.</p>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar with Pending and Rejected Courses -->
+      <div class="space-y-6 md:space-y-8 fade-in">
+        <!-- Pending Courses -->
+        {% if pending_purchases %}
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+          <div class="bg-gradient-to-r from-yellow-50 to-yellow-100 px-6 py-4 border-b border-gray-200">
+            <h5 class="text-xl font-bold text-gray-800">
+              <i class="bi bi-hourglass-split mr-2 text-yellow-600"></i>
+              Pending Approval
+              <span class="bg-yellow-600 text-white px-2 py-1 rounded-full text-sm font-medium ml-2">
+                {{ pending_courses }}
+              </span>
+            </h5>
+          </div>
+          <div class="p-4 md:p-6">
+            <div class="space-y-3">
+              {% for purchase in pending_purchases %}
+              <div class="p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                <div class="flex items-center gap-3">
+                  <div class="flex-shrink-0">
+                    <i class="bi bi-hourglass-split text-yellow-500 text-xl"></i>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <h6 class="font-medium text-gray-900 truncate">{{ purchase.course.course_name }}</h6>
+                    <p class="text-sm text-gray-600 truncate">
+                      {% if purchase.course.department %}{{ purchase.course.department.dept_name }}{% else %}Unassigned{% endif %}
+                    </p>
+                    <p class="text-xs text-yellow-600 mt-1">
+                      <i class="bi bi-info-circle mr-1"></i>
+                      Waiting for approval
+                    </p>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- Rejected Courses -->
+        {% if rejected_purchases %}
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+          <div class="bg-gradient-to-r from-red-50 to-red-100 px-6 py-4 border-b border-gray-200">
+            <h5 class="text-xl font-bold text-gray-800">
+              <i class="bi bi-x-circle mr-2 text-red-600"></i>
+              Rejected Courses
+              <span class="bg-red-600 text-white px-2 py-1 rounded-full text-sm font-medium ml-2">
+                {{ rejected_courses }}
+              </span>
+            </h5>
+          </div>
+          <div class="p-4 md:p-6">
+            <div class="space-y-3">
+              {% for purchase in rejected_purchases %}
+              <div class="p-3 bg-red-50 rounded-lg border border-red-200">
+                <div class="flex items-center justify-between gap-3">
+                  <div class="flex items-center gap-3 flex-1">
+                    <div class="flex-shrink-0">
+                      <i class="bi bi-x-circle text-red-500 text-xl"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <h6 class="font-medium text-gray-900 truncate">{{ purchase.course.course_name }}</h6>
+                      <p class="text-sm text-gray-600 truncate">
+                        {% if purchase.course.department %}{{ purchase.course.department.dept_name }}{% else %}Unassigned{% endif %}
+                      </p>
+                    </div>
+                  </div>
+                  <form method="POST" class="inline flex-shrink-0">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="remove_course">
+                    <input type="hidden" name="student_course_id" value="{{ purchase.id }}">
+                    <button type="submit" class="inline-flex items-center p-1 border border-transparent rounded-lg text-red-600 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" title="Remove" onclick="return confirm('Are you sure you want to remove this rejected course?')">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </form>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Add staggered fade-in animation to cards
+    const fadeElements = document.querySelectorAll('.fade-in');
+    fadeElements.forEach((element, index) => {
+      element.style.opacity = '0';
+      element.style.transform = 'translateY(20px)';
+
+      setTimeout(() => {
+        element.style.transition = 'opacity 0.5s, transform 0.5s';
+        element.style.opacity = '1';
+        element.style.transform = 'translateY(0)';
+      }, index * 100);
+    });
+  });
+</script>
+{% endblock %}

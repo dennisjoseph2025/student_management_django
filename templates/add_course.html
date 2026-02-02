@@ -1,0 +1,197 @@
+{% extends 'principal_base.html' %}
+
+{% block title %}Add Course - Student Management{% endblock %}
+
+{% block page_header %}Add New Course{% endblock %}
+
+{% block page_subtitle %}Create a new course for students{% endblock %}
+
+{% block page_actions %}
+<a href="{% url 'principal_dashboard' %}" 
+   class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50">
+    <i class="bi bi-arrow-left mr-2"></i> Back
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="w-full mx-auto">
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
+        <div class="px-8 py-4 border-b border-gray-200 bg-gray-50">
+            <h2 class="text-xl font-semibold text-gray-900 flex items-center gap-3">
+                <i class="bi bi-plus-circle text-indigo-600"></i>
+                Course Information
+            </h2>
+        </div>
+
+        <form method="POST" class="p-8">
+            {% csrf_token %}
+            
+            <!-- Display form errors at the top -->
+            {% if form.non_field_errors %}
+            <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                {% for error in form.non_field_errors %}
+                <p class="text-red-600 text-sm"><i class="bi bi-exclamation-circle mr-2"></i>{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <!-- Grid for form fields - 3 columns -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Column 1 -->
+                <div class="space-y-6">
+                    <!-- Course ID -->
+                    <div>
+                        <label for="{{ form.course_id.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.course_id.label }}
+                        </label>
+                        <div class="relative">
+                            <i class="bi bi-hash absolute left-3 top-3 text-gray-400"></i>
+                            {{ form.course_id }}
+                        </div>
+                        {% if form.course_id.errors %}
+                        <div class="mt-1 text-sm text-red-600">
+                            {% for error in form.course_id.errors %}
+                            <p><i class="bi bi-exclamation-circle mr-1"></i>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        <p class="mt-1 text-xs text-gray-500">Unique identifier (auto-uppercased)</p>
+                    </div>
+
+                    <!-- Course Price -->
+                    <div>
+                        <label for="{{ form.course_price.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.course_price.label }}
+                        </label>
+                        <div class="relative">
+                            <i class="bi bi-currency-rupee absolute left-3 top-3 text-gray-400"></i>
+                            {{ form.course_price }}
+                        </div>
+                        {% if form.course_price.errors %}
+                        <div class="mt-1 text-sm text-red-600">
+                            {% for error in form.course_price.errors %}
+                            <p><i class="bi bi-exclamation-circle mr-1"></i>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        <p class="mt-1 text-xs text-gray-500">Enter 0 for free courses</p>
+                    </div>
+                </div>
+
+                <!-- Column 2 -->
+                <div class="space-y-6">
+                    <!-- Department -->
+                    <div>
+                        <label for="{{ form.department.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.department.label }}
+                        </label>
+                        <div class="relative">
+                            <i class="bi bi-building absolute left-3 top-3 text-gray-400"></i>
+                            {{ form.department }}
+                            <i class="bi bi-chevron-down absolute right-3 top-3 text-gray-400"></i>
+                        </div>
+                        {% if form.department.errors %}
+                        <div class="mt-1 text-sm text-red-600">
+                            {% for error in form.department.errors %}
+                            <p><i class="bi bi-exclamation-circle mr-1"></i>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Course Name -->
+                    <div>
+                        <label for="{{ form.course_name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.course_name.label }}
+                        </label>
+                        <div class="relative">
+                            <i class="bi bi-book absolute left-3 top-3 text-gray-400"></i>
+                            {{ form.course_name }}
+                        </div>
+                        {% if form.course_name.errors %}
+                        <div class="mt-1 text-sm text-red-600">
+                            {% for error in form.course_name.errors %}
+                            <p><i class="bi bi-exclamation-circle mr-1"></i>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Column 3 -->
+                <div class="lg:col-span-1">
+                    <!-- Course Description -->
+                    <div>
+                        <label for="{{ form.course_description.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.course_description.label }}
+                        </label>
+                        <div class="relative">
+                            <i class="bi bi-file-text absolute left-3 top-3 text-gray-400"></i>
+                            {{ form.course_description }}
+                        </div>
+                        {% if form.course_description.errors %}
+                        <div class="mt-1 text-sm text-red-600">
+                            {% for error in form.course_description.errors %}
+                            <p><i class="bi bi-exclamation-circle mr-1"></i>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        <p class="mt-1 text-xs text-gray-500">Detailed description helps students</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="mt-8 pt-6 border-t border-gray-200">
+                <div class="flex flex-col sm:flex-row justify-end gap-3">
+                    <a href="{% url 'principal_dashboard' %}" 
+                       class="inline-flex items-center justify-center px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50">
+                        <i class="bi bi-x-circle mr-2"></i>
+                        Cancel
+                    </a>
+                    <button type="submit" 
+                            class="inline-flex items-center justify-center px-8 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                        <i class="bi bi-save mr-2"></i>
+                        Save Course
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const courseIdInput = document.getElementById('id_course_id');
+        const priceInput = document.getElementById('id_course_price');
+        
+        // Auto-uppercase course ID
+        if (courseIdInput) {
+            courseIdInput.addEventListener('input', function() {
+                this.value = this.value.toUpperCase();
+            });
+            
+            courseIdInput.addEventListener('blur', function() {
+                this.value = this.value.trim().toUpperCase();
+            });
+        }
+        
+        // Price input handling
+        if (priceInput) {
+            priceInput.addEventListener('focus', function() {
+                if (this.value === '0') {
+                    this.value = '';
+                }
+            });
+            
+            priceInput.addEventListener('blur', function() {
+                if (!this.value.trim()) {
+                    this.value = '0';
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

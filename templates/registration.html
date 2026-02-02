@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration - Student Management System</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        .form-section {
+            border-right: 1px solid #dee2e6;
+            padding-right: 2rem;
+        }
+        .form-section:last-child {
+            border-right: none;
+            padding-right: 0;
+        }
+        .section-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #0d6efd;
+        }
+        .compact-form .form-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+        .compact-form .form-control,
+        .compact-form .form-select {
+            font-size: 0.85rem;
+            padding: 0.4rem 0.75rem;
+            height: calc(1.5em + 0.8rem);
+        }
+        .compact-form .input-group {
+            height: calc(1.5em + 0.8rem);
+        }
+        .error-message {
+            color: #dc3545;
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container-fluid h-100 d-flex align-items-center justify-content-center p-3">
+        <div class="card border-0 shadow-lg w-100 h-100">
+            <!-- Header -->
+            <div class="card-header bg-primary bg-gradient text-white py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h1 class="h4 mb-0">
+                            <i class="bi bi-mortarboard me-2"></i>
+                            Student Registration
+                        </h1>
+                        <p class="mb-0 small opacity-75">Create your student account</p>
+                    </div>
+                    <a href="{% url 'login' %}" class="btn btn-outline-light btn-sm">
+                        <i class="bi bi-box-arrow-in-right me-1"></i>
+                        Back to Login
+                    </a>
+                </div>
+            </div>
+
+            <!-- Body - Horizontal Layout -->
+            <div class="card-body p-0 flex-grow-1">
+                <div class="container-fluid h-100">
+                    <!-- Django Messages & Errors -->
+                    {% if messages %}
+                    <div class="container-fluid mt-3">
+                        {% for message in messages %}
+                        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <!-- Registration Form -->
+                    <form method="POST" enctype="multipart/form-data" id="registrationForm" class="h-100 compact-form">
+                        {% csrf_token %}
+                        
+                        <div class="row h-100 g-0">
+                            <!-- Column 1: Personal Information -->
+                            <div class="col-md-4 h-100 form-section">
+                                <div class="h-100 d-flex flex-column p-4">
+                                    <div class="section-title">
+                                        <i class="bi bi-person-vcard me-2"></i>
+                                        Personal Information
+                                    </div>
+                                    
+                                    <div class="flex-grow-1">
+                                        <!-- First Name -->
+                                        <div class="mb-3">
+                                            <label for="id_first_name" class="form-label">
+                                                First Name *
+                                            </label>
+                                            {{ form.first_name }}
+                                            {% if form.first_name.errors %}
+                                            <div class="error-message">{{ form.first_name.errors.0 }}</div>
+                                            {% endif %}
+                                        </div>
+                                        
+                                        <!-- Last Name -->
+                                        <div class="mb-3">
+                                            <label for="id_last_name" class="form-label">
+                                                Last Name *
+                                            </label>
+                                            {{ form.last_name }}
+                                            {% if form.last_name.errors %}
+                                            <div class="error-message">{{ form.last_name.errors.0 }}</div>
+                                            {% endif %}
+                                        </div>
+                                        
+                                        <!-- Email -->
+                                        <div class="mb-3">
+                                            <label for="id_email" class="form-label">
+                                                Email Address *
+                                            </label>
+                                            {{ form.email }}
+                                            {% if form.email.errors %}
+                                            <div class="error-message">{{ form.email.errors.0 }}</div>
+                                            {% endif %}
+                                            <div class="form-text small">
+                                                Use your institutional email address
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Age -->
+                                        <div class="mb-3">
+                                            <label for="id_std_age" class="form-label">
+                                                Age (Optional)
+                                            </label>
+                                            {{ form.std_age }}
+                                            {% if form.std_age.errors %}
+                                            <div class="error-message">{{ form.std_age.errors.0 }}</div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Column 2: Student Information -->
+                            <div class="col-md-4 h-100 form-section">
+                                <div class="h-100 d-flex flex-column p-4">
+                                    <div class="section-title">
+                                        <i class="bi bi-mortarboard me-2"></i>
+                                        Student Information
+                                    </div>
+                                    
+                                    <div class="flex-grow-1">
+                                        <!-- Roll Number -->
+                                        <div class="mb-3">
+                                            <label for="id_std_reg_no" class="form-label">
+                                                Reg Number *
+                                            </label>
+                                            {{ form.std_reg_no }}
+                                            {% if form.std_reg_no.errors %}
+                                            <div class="error-message">{{ form.std_reg_no.errors.0 }}</div>
+                                            {% endif %}
+                                            <div class="form-text small">
+                                                Your unique student ID
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Department -->
+                                        <div class="mb-3">
+                                            <label for="id_std_dept" class="form-label">
+                                                Department *
+                                            </label>
+                                            {{ form.std_dept }}
+                                            {% if form.std_dept.errors %}
+                                            <div class="error-message">{{ form.std_dept.errors.0 }}</div>
+                                            {% endif %}
+                                        </div>
+                                        
+                                        <!-- Year of Admission -->
+                                        <div class="mb-3">
+                                            <label for="id_std_year_of_admission" class="form-label">
+                                                Year of Admission *
+                                            </label>
+                                            {{ form.std_year_of_admission }}
+                                            {% if form.std_year_of_admission.errors %}
+                                            <div class="error-message">{{ form.std_year_of_admission.errors.0 }}</div>
+                                            {% endif %}
+                                        </div>
+                                        
+                                        <!-- Phone Number -->
+                                        <div class="mb-3">
+                                            <label for="id_std_phone_no" class="form-label">
+                                                Phone Number (Optional)
+                                            </label>
+                                            {{ form.std_phone_no }}
+                                            {% if form.std_phone_no.errors %}
+                                            <div class="error-message">{{ form.std_phone_no.errors.0 }}</div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Column 3: Security & Submit -->
+                            <div class="col-md-4 h-100 form-section">
+                                <div class="h-100 d-flex flex-column p-4">
+                                    <div class="section-title">
+                                        <i class="bi bi-shield-lock me-2"></i>
+                                        Security & Terms
+                                    </div>
+                                    
+                                    <div class="flex-grow-1">
+                                        <!-- Profile Picture -->
+                                        <div class="mb-3">
+                                            <label for="id_std_pic" class="form-label">
+                                                Profile Picture (Optional)
+                                            </label>
+                                            {{ form.std_pic }}
+                                            {% if form.std_pic.errors %}
+                                            <div class="error-message">{{ form.std_pic.errors.0 }}</div>
+                                            {% endif %}
+                                            <div class="form-text small">
+                                                Upload a clear passport-size photo (max 2MB, JPG/PNG)
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Password -->
+                                        <div class="mb-3">
+                                            <label for="id_password1" class="form-label">
+                                                Password *
+                                            </label>
+                                            {{ form.password1 }}
+                                            {% if form.password1.errors %}
+                                            <div class="error-message">{{ form.password1.errors.0 }}</div>
+                                            {% endif %}
+                                            <div class="form-text small">
+                                                Minimum 8 characters with letters and numbers
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Confirm Password -->
+                                        <div class="mb-3">
+                                            <label for="id_password2" class="form-label">
+                                                Confirm Password *
+                                            </label>
+                                            {{ form.password2 }}
+                                            {% if form.password2.errors %}
+                                            <div class="error-message">{{ form.password2.errors.0 }}</div>
+                                            {% endif %}
+                                        </div>
+                                        
+                                        <!-- Terms & Conditions -->
+                                        <div class="mb-4">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="terms" required>
+                                                <label class="form-check-label small" for="terms">
+                                                    I agree to the Terms & Conditions and Privacy Policy
+                                                </label>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Submit Button -->
+                                        <div class="mt-auto">
+                                            <button type="submit" class="btn btn-primary w-100">
+                                                <i class="bi bi-person-plus me-2"></i>
+                                                Register as Student
+                                            </button>
+                                            
+                                            <div class="text-center mt-3">
+                                                <small class="text-muted">
+                                                    <i class="bi bi-shield-check me-1"></i>
+                                                    Your information is secured and encrypted
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Auto-focus on first input field
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('id_first_name').focus();
+            
+            // Simple form submission handler
+            const form = document.getElementById('registrationForm');
+            form.addEventListener('submit', function() {
+                const submitBtn = form.querySelector('button[type="submit"]');
+                submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Processing...';
+                submitBtn.disabled = true;
+                console.log("Form submitting...");
+            });
+        });
+    </script>
+</body>
+</html>

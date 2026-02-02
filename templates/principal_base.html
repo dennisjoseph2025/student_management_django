@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Principal Dashboard - Student Management System{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <style>
+        * {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+    <!-- Top navbar -->
+    <header class="bg-white border-b border-gray-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-4">
+                    <a href="{% url 'principal_dashboard' %}" class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
+                            <i class="bi bi-mortarboard-fill text-xl text-white"></i>
+                        </div>
+                        <div>
+                            <span class="text-xl font-bold text-gray-900">EduAdmin</span>
+                            <p class="text-xs text-gray-500 -mt-1 font-medium">Principal Portal</p>                          
+                        </div>
+
+                    </a>
+                </div>
+
+                <nav class="hidden md:flex items-center gap-1">
+                    <a href="{% url 'principal_dashboard' %}"
+                        class="px-4 py-2.5 rounded-lg text-sm font-medium border border-transparent {% if request.resolver_match.url_name == 'principal_dashboard' %}bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-700 border-indigo-200{% else %}text-gray-700 hover:text-indigo-600 hover:bg-gray-50{% endif %}">
+                        <i class="bi bi-speedometer2 mr-2"></i>Dashboard
+                    </a>
+                    <a href="{% url 'add_course' %}"
+                        class="px-4 py-2.5 rounded-lg text-sm font-medium border border-transparent {% if request.resolver_match.url_name == 'add_course' %}bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-700 border-indigo-200{% else %}text-gray-700 hover:text-indigo-600 hover:bg-gray-50{% endif %}">
+                        <i class="bi bi-plus-circle mr-2"></i>Add Course
+                    </a>
+                    <a href="{% url 'course_list' %}"
+                        class="px-4 py-2.5 rounded-lg text-sm font-medium border border-transparent {% if request.resolver_match.url_name == 'course_list' %}bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-700 border-indigo-200{% else %}text-gray-700 hover:text-indigo-600 hover:bg-gray-50{% endif %}">
+                        <i class="bi bi-book mr-2"></i>View Courses
+                    </a>
+                    <a href="{% url 'students_list' %}"
+                        class="px-4 py-2.5 rounded-lg text-sm font-medium border border-transparent {% if 'student' in request.resolver_match.url_name %}bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-700 border-indigo-200{% else %}text-gray-700 hover:text-indigo-600 hover:bg-gray-50{% endif %}">
+                        <i class="bi bi-people-fill mr-2"></i>View Students
+                    </a>
+                </nav>
+
+                <div class="flex items-center gap-4">
+                    
+                    <!-- Logout -->
+                    <a href="{% url 'logout' %}"
+                        class="px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white text-sm font-medium rounded-lg border border-red-600 hover:border-red-700 hover:from-red-600 hover:to-red-700 flex items-center gap-2">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span class="hidden sm:inline">Logout</span>
+                    </a>
+
+                    <!-- Mobile menu button -->
+                    <div class="md:hidden">
+                        <button id="mobileMenuBtn"
+                            class="w-10 h-10 rounded-lg bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200 flex items-center justify-center">
+                            <i class="bi bi-list text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile menu -->
+        <div id="mobileMenu" class="md:hidden hidden border-t border-gray-200 bg-white">
+            <div class="px-3 py-4 space-y-1">
+                
+                <!-- Mobile Navigation Links -->
+                <a href="{% url 'principal_dashboard' %}"
+                    class="flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium border border-transparent {% if request.resolver_match.url_name == 'principal_dashboard' %}bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-700 border-indigo-200{% else %}text-gray-700 hover:bg-gray-50{% endif %}">
+                    <i class="bi bi-speedometer2 text-lg"></i>Dashboard
+                </a>
+                <a href="{% url 'add_course' %}"
+                    class="flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium border border-transparent {% if request.resolver_match.url_name == 'add_course' %}bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-700 border-indigo-200{% else %}text-gray-700 hover:bg-gray-50{% endif %}">
+                    <i class="bi bi-plus-circle text-lg"></i>Add Course
+                </a>
+                <a href="{% url 'course_list' %}"
+                    class="flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium border border-transparent {% if request.resolver_match.url_name == 'course_list' %}bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-700 border-indigo-200{% else %}text-gray-700 hover:bg-gray-50{% endif %}">
+                    <i class="bi bi-book text-lg"></i>View Courses
+                </a>
+                <a href="{% url 'students_list' %}"
+                    class="flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium border border-transparent {% if 'student' in request.resolver_match.url_name %}bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-700 border-indigo-200{% else %}text-gray-700 hover:bg-gray-50{% endif %}">
+                    <i class="bi bi-people-fill text-lg"></i>View Students
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main layout -->
+    <div class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
+        {% if messages %}
+        <div class="mb-6 space-y-3">
+            {% for message in messages %}
+            <div class="p-4 rounded-lg border-l-4 
+                {% if message.tags == 'success' %}bg-green-50 border-green-500 text-green-800
+                {% elif message.tags == 'warning' %}bg-yellow-50 border-yellow-500 text-yellow-800
+                {% elif message.tags == 'danger' or message.tags == 'error' %}bg-red-50 border-red-500 text-red-800
+                {% else %}bg-blue-50 border-blue-500 text-blue-800{% endif %}">
+                <div class="flex items-start">
+                    <i class="bi 
+                        {% if message.tags == 'success' %}bi-check-circle-fill
+                        {% elif message.tags == 'warning' %}bi-exclamation-triangle-fill
+                        {% elif message.tags == 'danger' or message.tags == 'error' %}bi-x-circle-fill
+                        {% else %}bi-info-circle-fill{% endif %} 
+                        mr-3 text-lg mt-0.5"></i>
+                    <div class="flex-1">
+                        <p class="font-medium">{{ message }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% block content %}
+        <div class="text-gray-700">Welcome to the Principal Dashboard</div>
+        {% endblock %}
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex flex-col md:flex-column items-center gap-4 text-center">
+                    <p class="text-sm text-gray-600">
+                        &copy; Student Management System. All rights reserved.
+                    </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const mobileBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        if (mobileBtn) {
+            mobileBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
+    </script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>
