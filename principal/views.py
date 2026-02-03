@@ -91,9 +91,17 @@ def principal_dashboard(request):
     return render(request, 'principal_dashboard.html', context)
 @login_required
 def course_list(request):
-    if request.user.role != 'PRINCIPAL':
-        messages.error(request, 'Access denied. Principal access only.')
-        return redirect('student_dashboard')
+    # Handle course deletion
+    if request.method == 'POST' and request.POST.get('action') == 'delete_course':
+        course_id = request.POST.get('course_id')
+        try:
+            course = AddOnCourse.objects.get(id=course_id)
+            course_name = course.course_name
+            course.delete()
+            messages.success(request, f'Course "{course_name}" deleted successfully!')
+        except AddOnCourse.DoesNotExist:
+            messages.error(request, 'Course not found.')
+        return redirect('course_list')
     
     # Get all departments for filter dropdown
     departments = Department.objects.all()
@@ -129,8 +137,8 @@ def course_list(request):
     }
     
     return render(request, 'principal_course_list.html', context)
-
 @login_required
+
 def students_list(request):  
     # Get all students
     students = Student.objects.filter(role='STUDENT').select_related('std_dept').order_by('-date_joined')
